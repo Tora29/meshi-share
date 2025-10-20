@@ -1,0 +1,70 @@
+// MeshiShare - Prisma Schema
+// データモデル詳細: .docs/01-requirements/04-data-model.md
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ユーザー情報
+model User {
+  id        String   @id @default(uuid()) @db.Uuid
+  email     String   @unique @db.VarChar(255)
+  name      String   @db.VarChar(100)
+  avatarUrl String?  @map("avatar_url") @db.Text
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  // リレーション
+  places  Place[]
+  reviews Review[]
+
+  @@map("users")
+}
+
+// 飯どころ情報
+model Place {
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String   @db.VarChar(200)
+  address     String   @db.Text
+  genre       String?  @db.VarChar(50)
+  priceRange  Int?     @map("price_range") // 1=¥, 2=¥¥, 3=¥¥¥
+  description String?  @db.Text
+  photos      String[] @db.Text
+  createdBy   String   @map("created_by") @db.Uuid
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  // リレーション
+  creator User     @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+  reviews Review[]
+
+  @@index([createdBy])
+  @@index([genre])
+  @@index([createdAt(sort: Desc)])
+  @@map("places")
+}
+
+// レビュー・評価
+model Review {
+  id        String    @id @default(uuid()) @db.Uuid
+  placeId   String    @map("place_id") @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  rating    Int // 1〜5
+  comment   String?   @db.Text
+  visitDate DateTime? @map("visit_date") @db.Date
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  // リレーション
+  place Place @relation(fields: [placeId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([placeId, userId]) // 1ユーザー1店舗1レビュー
+  @@index([placeId, createdAt(sort: Desc)])
+  @@map("reviews")
+}
