@@ -51,6 +51,66 @@
 - `@playwright/test` (1.56.1) - E2Eテスト
 - `jsdom` (27.0.1) - DOM 環境シミュレーション
 
+## ディレクトリ構成
+
+このプロジェクトは **Next.js App Router の通例に沿ったコロケーション型** の構成を採用しています。
+
+### 基本構造
+
+```
+src/
+├── app/              # ルーティング層（Next.js App Router）
+├── lib/              # ライブラリ統合層
+└── shared/           # 共通リソース層
+```
+
+### 詳細構成
+
+```
+src/
+├── app/                      # ルーティング専用
+│   ├── [route]/              # 各ルート（例: places, reviews, login）
+│   │   ├── ui/               # ルート専用UIコンポーネント
+│   │   ├── schema/           # Zodバリデーションスキーマ
+│   │   ├── server/           # Server Actions/Queries
+│   │   ├── [dynamic]/        # 動的ルート（例: [id]）
+│   │   │   └── page.tsx
+│   │   └── page.tsx          # ページコンポーネント
+│   ├── layout.tsx            # ルートレイアウト
+│   └── page.tsx              # ホームページ
+│
+├── lib/                      # 外部ライブラリのラッパー・設定
+│   ├── supabase/
+│   │   ├── client.ts         # Client Component用
+│   │   └── server.ts         # Server Component用
+│   ├── prisma.ts             # Prisma Client
+│   └── utils/                # ライブラリ関連ユーティリティ
+│
+└── shared/                   # 複数ドメインで共有するリソース
+    ├── components/           # 共通UIコンポーネント（Button, Card等）
+    └── utils/                # 共通ユーティリティ関数
+```
+
+### 設計原則
+
+1. **レイヤーの責任分離**
+   - `app/` - ルーティングとページ固有のロジックのみ
+   - `lib/` - 外部ライブラリ（Supabase, Prisma等）の統合
+   - `shared/` - 複数ドメインで使用する共通コード
+
+2. **ドメインの3層構造**
+   - `ui/` - UIコンポーネント（Client/Server Components）
+   - `schema/` - Zodスキーマによるバリデーション定義
+   - `server/` - Server ActionsとServer Queries
+
+3. **コロケーション**
+   - 関連するコードは近くに配置（Next.js App Routerの推奨）
+   - ドメイン削除時はディレクトリごと削除可能
+
+4. **命名規則**
+   - 小文字のケバブケース（例: `user-profile/`）
+   - ファイル名はPascalCase（例: `UserCard.tsx`）
+
 ## コマンド
 
 ### 開発・ビルド
