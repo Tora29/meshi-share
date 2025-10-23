@@ -40,6 +40,7 @@ yarn-error.log*
 
 # claude
 /.claude
+CLAUDE.md
 
 # docs
 /.docs
@@ -58,3 +59,6 @@ next-env.d.ts
 
 # supabase
 /supabase/
+
+# vscode
+.vscode/
