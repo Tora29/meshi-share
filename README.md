@@ -73,6 +73,7 @@ cp .env.example .env
 ```
 
 必要な環境変数：
+
 - `DATABASE_URL`: Supabase PostgreSQL 接続URL
 - `NEXT_PUBLIC_SUPABASE_URL`: Supabase プロジェクトURL
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Supabase 匿名キー
@@ -122,13 +123,13 @@ npx prisma studio    # Prisma Studio（データベース可視化）
 
 ## 📅 開発ロードマップ
 
-| Week | タスク |
-|------|--------|
-| 1-2 | プロジェクトセットアップ、認証実装 |
-| 3-4 | 店舗投稿・一覧・詳細機能 |
-| 5-6 | レビュー・評価機能 |
-| 7 | 検索・フィルタリング機能 |
-| 8 | UI/UX改善、β公開 |
+| Week | タスク                             |
+| ---- | ---------------------------------- |
+| 1-2  | プロジェクトセットアップ、認証実装 |
+| 3-4  | 店舗投稿・一覧・詳細機能           |
+| 5-6  | レビュー・評価機能                 |
+| 7    | 検索・フィルタリング機能           |
+| 8    | UI/UX改善、β公開                   |
 
 **β公開予定**: Week 8 終了時
 
