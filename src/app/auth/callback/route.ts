@@ -19,7 +19,7 @@ const AUTH_ERROR_CODE = {
  */
 const REDIRECT_PATH = {
   LOGIN: '/login',
-  HOME: '/',
+  DASHBOARD: '/dashboard',
 } as const
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
@@ -51,8 +51,10 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       )
     }
 
-    // 認証成功時はホームページにリダイレクト
-    return NextResponse.redirect(new URL(REDIRECT_PATH.HOME, requestUrl.origin))
+    // 認証成功時はダッシュボードにリダイレクト
+    return NextResponse.redirect(
+      new URL(REDIRECT_PATH.DASHBOARD, requestUrl.origin)
+    )
   } catch (err: unknown) {
     // 予期しないエラーの場合もログインページへリダイレクト
     logger.error('Unexpected error during authentication', err)

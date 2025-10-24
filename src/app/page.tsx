@@ -14,7 +14,6 @@ export default async function Home(): Promise<void> {
     redirect('/login')
   }
 
-  // 認証済みの場合はダッシュボード（飯どころ一覧）へ
-  // TODO: /dashboard または /restaurants ページを実装後に変更
-  redirect('/login') // 一時的にloginへ（ダッシュボード未実装のため）
+  // 認証済みの場合はダッシュボードへリダイレクト
+  redirect('/dashboard')
 }
