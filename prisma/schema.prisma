@@ -10,6 +10,37 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ジャンルマスタ
+model GenreMaster {
+  id          String   @id @default(uuid()) @db.Uuid
+  value       String   @unique @db.VarChar(50)
+  label       String   @db.VarChar(50)
+  displayOrder Int     @default(0) @map("display_order")
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@index([displayOrder])
+  @@index([isActive])
+  @@map("genre_masters")
+}
+
+// 価格帯マスタ
+model PriceRangeMaster {
+  id          String   @id @default(uuid()) @db.Uuid
+  value       Int      @unique
+  label       String   @db.VarChar(50)
+  description String?  @db.VarChar(100)
+  displayOrder Int     @default(0) @map("display_order")
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@index([displayOrder])
+  @@index([isActive])
+  @@map("price_range_masters")
+}
+
 // ユーザー情報
 model User {
   id        String   @id @default(uuid()) @db.Uuid
@@ -29,9 +60,11 @@ model User {
 // 飯どころ情報
 model Place {
   id          String   @id @default(uuid()) @db.Uuid
-  name        String   @db.VarChar(200)
-  address     String   @db.Text
-  genre       String?  @db.VarChar(50)
+  placeId     String   @unique @map("place_id") @db.Text // Google Place ID
+  name        String   @db.VarChar(200)                   // 店舗名（自動取得）
+  mapUrl      String   @unique @map("map_url") @db.Text  // Google Maps URL
+  address     String   @db.Text                           // 住所（自動取得）
+  genres      String[] @db.Text                           // ジャンル（複数選択可）
   priceRange  Int?     @map("price_range") // 1=¥, 2=¥¥, 3=¥¥¥
   description String?  @db.Text
   photos      String[] @db.Text
@@ -44,8 +77,8 @@ model Place {
   reviews Review[]
 
   @@index([createdBy])
-  @@index([genre])
   @@index([createdAt(sort: Desc)])
+  @@index([placeId])
   @@map("places")
 }
 

@@ -44,7 +44,7 @@ export default async function DashboardPage(): Promise<ReactElement> {
           <div className="flex items-center justify-between">
             <h1 className="text-primary text-2xl font-bold">Meshi Share</h1>
             <form action={signOut}>
-              <Button type="submit" variant="ghost" size="sm">
+              <Button type="submit" style="ghost" size="sm">
                 ログアウト
               </Button>
             </form>

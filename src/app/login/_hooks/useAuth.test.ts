@@ -5,7 +5,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { useAuth } from './useAuth'
 
 // Server Actionsのモック
-vi.mock('../server/authProviders', () => ({
+vi.mock('../_server/authProviders', () => ({
   signInWithGoogleOAuth: vi.fn(),
 }))
 
@@ -30,7 +30,7 @@ describe('useAuth', () => {
   it('signIn成功時にリダイレクトURLへ遷移', async () => {
     // Arrange
     const mockRedirectUrl = 'https://accounts.google.com/auth'
-    const { signInWithGoogleOAuth } = await import('../server/authProviders')
+    const { signInWithGoogleOAuth } = await import('../_server/authProviders')
     vi.mocked(signInWithGoogleOAuth).mockResolvedValue({
       data: { url: mockRedirectUrl },
       error: null,
@@ -56,7 +56,7 @@ describe('useAuth', () => {
   it('signIn失敗時にエラーを設定', async () => {
     // Arrange
     const errorMessage = '認証に失敗しました'
-    const { signInWithGoogleOAuth } = await import('../server/authProviders')
+    const { signInWithGoogleOAuth } = await import('../_server/authProviders')
     vi.mocked(signInWithGoogleOAuth).mockResolvedValue({
       data: { url: null },
       error: { message: errorMessage, status: 500 },
@@ -78,7 +78,7 @@ describe('useAuth', () => {
   it('例外発生時にエラーを設定', async () => {
     // Arrange
     const errorMessage = 'Network error'
-    const { signInWithGoogleOAuth } = await import('../server/authProviders')
+    const { signInWithGoogleOAuth } = await import('../_server/authProviders')
     vi.mocked(signInWithGoogleOAuth).mockRejectedValue(new Error(errorMessage))
 
     const { result } = renderHook(() => useAuth())
@@ -96,7 +96,7 @@ describe('useAuth', () => {
 
   it('不明なエラー時にデフォルトメッセージを設定', async () => {
     // Arrange
-    const { signInWithGoogleOAuth } = await import('../server/authProviders')
+    const { signInWithGoogleOAuth } = await import('../_server/authProviders')
     vi.mocked(signInWithGoogleOAuth).mockRejectedValue({
       code: 'UNKNOWN_ERROR',
     })
@@ -116,7 +116,7 @@ describe('useAuth', () => {
 
   it('複数回のsignIn呼び出しでエラーがリセットされる', async () => {
     // Arrange
-    const { signInWithGoogleOAuth } = await import('../server/authProviders')
+    const { signInWithGoogleOAuth } = await import('../_server/authProviders')
 
     // 最初の呼び出しはエラー
     vi.mocked(signInWithGoogleOAuth).mockResolvedValueOnce({
