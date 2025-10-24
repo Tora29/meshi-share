@@ -36,7 +36,8 @@ export async function signInWithGoogleOAuth(): Promise<OAuthResponse> {
   const supabase = await createClient()
 
   // リダイレクト先URLを構築（本番・開発環境両対応）
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? DEFAULT_LOCAL_URL
+  // NEXT_PUBLIC_APP_URL: アプリケーションのベースURL（例: https://example.com）
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? DEFAULT_LOCAL_URL
   const redirectTo = `${baseUrl}${CALLBACK_PATH}`
 
   const result = await supabase.auth.signInWithOAuth({
