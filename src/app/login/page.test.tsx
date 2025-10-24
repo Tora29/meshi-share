@@ -12,7 +12,7 @@ vi.mock('next/navigation', () => ({
 }))
 
 // カスタムフックのモック
-vi.mock('./hooks/useAuth', () => ({
+vi.mock('./_hooks/useAuth', () => ({
   useAuth: vi.fn(),
 }))
 
@@ -27,7 +27,7 @@ describe('LoginPage', () => {
     } as unknown as ReadonlyURLSearchParams)
 
     // デフォルトのuseAuthモック
-    const { useAuth } = await import('./hooks/useAuth')
+    const { useAuth } = await import('./_hooks/useAuth')
     vi.mocked(useAuth).mockReturnValue({
       signIn: vi.fn(),
       isLoading: false,
@@ -146,7 +146,7 @@ describe('LoginPage', () => {
   describe('エラー表示 - useAuth経由', () => {
     it('useAuthのエラーが表示される', async () => {
       const errorMessage = '認証処理でエラーが発生しました'
-      const { useAuth } = await import('./hooks/useAuth')
+      const { useAuth } = await import('./_hooks/useAuth')
       vi.mocked(useAuth).mockReturnValue({
         signIn: vi.fn(),
         isLoading: false,
@@ -164,7 +164,7 @@ describe('LoginPage', () => {
         get: vi.fn().mockReturnValue('auth_failed'),
       } as unknown as ReadonlyURLSearchParams)
 
-      const { useAuth } = await import('./hooks/useAuth')
+      const { useAuth } = await import('./_hooks/useAuth')
       vi.mocked(useAuth).mockReturnValue({
         signIn: vi.fn(),
         isLoading: false,
@@ -183,7 +183,7 @@ describe('LoginPage', () => {
   describe('ボタンの動作', () => {
     it('クリック時にsignIn関数が呼ばれる', async () => {
       const mockSignIn = vi.fn()
-      const { useAuth } = await import('./hooks/useAuth')
+      const { useAuth } = await import('./_hooks/useAuth')
       vi.mocked(useAuth).mockReturnValue({
         signIn: mockSignIn,
         isLoading: false,
@@ -200,7 +200,7 @@ describe('LoginPage', () => {
     })
 
     it('ローディング中はボタンが無効化される', async () => {
-      const { useAuth } = await import('./hooks/useAuth')
+      const { useAuth } = await import('./_hooks/useAuth')
       vi.mocked(useAuth).mockReturnValue({
         signIn: vi.fn(),
         isLoading: true,

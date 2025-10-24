@@ -13,10 +13,10 @@ import {
   CardBody,
   CardTitle,
 } from '@/shared/components/Card'
-import { getAuthErrorMessage } from '@/shared/consts/errorMessages'
 import loginImage from '@/shared/static/loginImage.png'
 
-import { useAuth } from './hooks/useAuth'
+import { getAuthErrorMessage } from './_consts/errorMessages'
+import { useAuth } from './_hooks/useAuth'
 
 import type { ReactElement } from 'react'
 
@@ -55,7 +55,7 @@ function LoginPageContent(): ReactElement {
               <Button
                 onClick={signIn}
                 disabled={isLoading}
-                variant="primary"
+                color="primary"
                 block
               >
                 {isLoading ? (

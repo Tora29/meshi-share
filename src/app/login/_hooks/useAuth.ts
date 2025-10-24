@@ -7,7 +7,7 @@ import { getErrorMessage } from '@/shared/utils/error'
 import {
   signInWithGoogleOAuth,
   type OAuthResponse,
-} from '../server/authProviders'
+} from '../_server/authProviders'
 
 /**
  * 認証フックの戻り値型
