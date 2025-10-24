@@ -49,8 +49,7 @@ export const placePostSchema = z.object({
     .array(z.string())
     .max(RULES.GENRES.MAX_COUNT, {
       message: `ジャンルは最大${RULES.GENRES.MAX_COUNT}つまで選択できます`,
-    })
-    .default([]),
+    }),
 
   // 価格帯（オプション、1-3の整数）
   priceRange: z
@@ -80,8 +79,7 @@ export const placePostSchema = z.object({
     .array(z.string().url({ message: '有効なURLを指定してください' }))
     .max(RULES.PHOTOS.MAX_COUNT, {
       message: `画像は最大${RULES.PHOTOS.MAX_COUNT}枚までアップロードできます`,
-    })
-    .default([]),
+    }),
 })
 
 /**
