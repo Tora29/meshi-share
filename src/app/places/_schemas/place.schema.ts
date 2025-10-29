@@ -45,11 +45,9 @@ export const placePostSchema = z.object({
     .trim(),
 
   // ジャンル（複数選択可、最大3つ）
-  genres: z
-    .array(z.string())
-    .max(RULES.GENRES.MAX_COUNT, {
-      message: `ジャンルは最大${RULES.GENRES.MAX_COUNT}つまで選択できます`,
-    }),
+  genres: z.array(z.string()).max(RULES.GENRES.MAX_COUNT, {
+    message: `ジャンルは最大${RULES.GENRES.MAX_COUNT}つまで選択できます`,
+  }),
 
   // 価格帯（オプション、1-3の整数）
   priceRange: z
