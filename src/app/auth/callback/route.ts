@@ -38,7 +38,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
   try {
     const supabase = await createClient()
-    const { error } = await supabase.auth.exchangeCodeForSession(code)
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code)
 
     // 認証エラーがあればログインページへリダイレクト
     if (error) {
@@ -50,6 +50,13 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         )
       )
     }
+
+    // 認証成功時のログ記録
+    const userId = data.user?.id
+    logger.info('User logged in successfully', userId, {
+      email: data.user?.email,
+      provider: data.user?.app_metadata?.provider,
+    })
 
     // 認証成功時はダッシュボードにリダイレクト
     return NextResponse.redirect(
