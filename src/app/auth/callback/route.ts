@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 
+import { logger } from '@/lib/logger'
 import { createClient } from '@/lib/supabase/server'
-import { logger } from '@/shared/utils/logger'
 
 import type { NextRequest } from 'next/server'
 
@@ -42,7 +42,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     // 認証エラーがあればログインページへリダイレクト
     if (error) {
-      logger.error('Authentication error', error)
+      logger.error('Authentication error', undefined, { error })
       return NextResponse.redirect(
         new URL(
           `${REDIRECT_PATH.LOGIN}?error=${AUTH_ERROR_CODE.AUTH_FAILED}`,
@@ -57,7 +57,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     )
   } catch (err: unknown) {
     // 予期しないエラーの場合もログインページへリダイレクト
-    logger.error('Unexpected error during authentication', err)
+    logger.error('Unexpected error during authentication', undefined, {
+      error: err,
+    })
     return NextResponse.redirect(
       new URL(
         `${REDIRECT_PATH.LOGIN}?error=${AUTH_ERROR_CODE.UNEXPECTED}`,
