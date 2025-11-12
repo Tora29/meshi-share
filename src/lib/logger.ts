@@ -19,12 +19,8 @@ import { createClient } from './supabase/server'
 const isDebugMode =
   process.env.LOGDOCK_DEBUG === 'true' || process.env.NODE_ENV === 'development'
 
-// Vercel本番環境かつLogDockが利用不可の場合はProductionLoggerを使用
-const useProductionLogger =
-  process.env.USE_PRODUCTION_LOGGER === 'true' ||
-  (process.env.VERCEL === '1' &&
-    process.env.NODE_ENV === 'production' &&
-    !process.env.LOGDOCK_API_URL?.includes('localhost'))
+// ProductionLoggerは環境変数で明示的に有効化した場合のみ使用
+const useProductionLogger = process.env.USE_PRODUCTION_LOGGER === 'true'
 
 if (isDebugMode) {
   console.log('[Logger Init] Configuration:', {
