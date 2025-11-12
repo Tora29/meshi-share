@@ -20,27 +20,39 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
     })
 
     // LogDockのエンドポイントに直接アクセスしてテスト
-    const testResponse = await fetch(
-      `${process.env.LOGDOCK_API_URL}/health`,
-      {
+    let testResponse: any = { ok: false, error: 'Not executed' }
+    try {
+      const response = await fetch(`${process.env.LOGDOCK_API_URL}/health`, {
+        method: 'GET',
         headers: {
           'CF-Access-Client-Id': process.env.CF_ACCESS_CLIENT_ID ?? '',
           'CF-Access-Client-Secret': process.env.CF_ACCESS_CLIENT_SECRET ?? '',
         },
+      })
+      testResponse = {
+        ok: response.ok,
+        status: response.status,
+        statusText: response.statusText,
       }
-    ).catch((error) => ({
-      ok: false,
-      error: error instanceof Error ? error.message : String(error),
-    }))
+      if (!response.ok) {
+        const text = await response.text()
+        testResponse.error = text
+      }
+    } catch (error) {
+      testResponse = {
+        ok: false,
+        error: error instanceof Error ? error.message : String(error),
+        errorType: error instanceof Error ? error.name : 'UnknownError',
+      }
+    }
 
     return NextResponse.json({
       message: 'LogDock test executed',
       logSent: true,
       healthCheck: testResponse.ok
         ? 'LogDock is reachable'
-        : `LogDock unreachable: ${
-            'error' in testResponse ? testResponse.error : 'Unknown error'
-          }`,
+        : 'LogDock unreachable',
+      healthCheckDetails: testResponse,
       config: {
         apiUrl: process.env.LOGDOCK_API_URL,
         hasApiKey: Boolean(process.env.LOGDOCK_API_KEY),
