@@ -14,7 +14,7 @@ import { createClient } from './supabase/server'
  */
 const isDebugForced = process.env.LOGDOCK_DEBUG === 'true'
 const isDevelopment = process.env.NODE_ENV === 'development'
-const debugEnabled = isDebugForced ? true : isDevelopment
+const debugEnabled = isDebugForced || isDevelopment
 
 export const logger = createLogger({
   apiUrl: process.env.LOGDOCK_API_URL ?? '',
