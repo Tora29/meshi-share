@@ -57,5 +57,9 @@ export function getErrorMessageFromCode(
     return null
   }
 
-  return errorMap[errorCode] ?? fallback ?? null
+  if (errorCode in errorMap) {
+    return errorMap[errorCode]
+  }
+
+  return fallback ?? null
 }

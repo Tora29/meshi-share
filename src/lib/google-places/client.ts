@@ -24,6 +24,7 @@ export class GooglePlacesClient {
    * @param maxResults - 最大結果数（デフォルト: 5）
    * @param fieldMask - 取得するフィールドマスク（デフォルト: 標準フィールド）
    * @returns 検索結果
+   * @throws {Error} Places API のエラーレスポンスまたはネットワークエラー
    */
   async searchText(
     query: string,
@@ -66,6 +67,7 @@ export class GooglePlacesClient {
    * @param placeId - Place ID（例: ChIJ...）
    * @param fieldMask - 取得するフィールドマスク（デフォルト: 標準フィールド）
    * @returns 店舗詳細情報
+   * @throws {Error} Places API のエラーレスポンスまたはネットワークエラー
    */
   async getPlaceDetails(
     placeId: string,

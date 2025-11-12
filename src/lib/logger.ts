@@ -1,4 +1,6 @@
-import { createLogger } from '@logdock/client'
+import { createLogger } from '@tora29/logdock-client'
+
+import { createClient } from './supabase/server'
 
 /**
  * Logdockロギングクライアント
@@ -8,6 +10,7 @@ import { createLogger } from '@logdock/client'
  * - LOGDOCK_API_KEY: API認証キー
  * - CF_ACCESS_CLIENT_ID: Cloudflare Access ID（オプション）
  * - CF_ACCESS_CLIENT_SECRET: Cloudflare Accessシークレット（オプション）
+ * - LOGDOCK_DEBUG: デバッグモード強制有効化（オプション、'true'で有効）
  */
 export const logger = createLogger({
   apiUrl: process.env.LOGDOCK_API_URL ?? '',
@@ -15,5 +18,15 @@ export const logger = createLogger({
   app: 'meshi-share',
   cfAccessClientId: process.env.CF_ACCESS_CLIENT_ID,
   cfAccessClientSecret: process.env.CF_ACCESS_CLIENT_SECRET,
-  debug: process.env.NODE_ENV === 'development',
+  debug:
+    process.env.LOGDOCK_DEBUG === 'true'
+      ? true
+      : process.env.NODE_ENV === 'development',
+  getUserId: async () => {
+    const supabase = await createClient()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    return (user?.user_metadata.full_name as string | undefined) ?? 'Unknown'
+  },
 })

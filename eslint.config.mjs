@@ -12,16 +12,19 @@ const compat = new FlatCompat({
 })
 
 const eslintConfig = [
-  ...compat.extends('next/core-web-vitals', 'next/typescript'),
   {
     ignores: [
+      '**/node_modules/**',
       'node_modules/**',
       '.next/**',
       'out/**',
       'build/**',
       'next-env.d.ts',
+      'prisma/**',
+      'lib/**', // @tora29/logdock-clientが自動生成するファイルを除外
     ],
   },
+  ...compat.extends('next/core-web-vitals', 'next/typescript'),
   {
     languageOptions: {
       parser: (await import('@typescript-eslint/parser')).default,

@@ -22,6 +22,12 @@ const REDIRECT_PATH = {
   DASHBOARD: '/dashboard',
 } as const
 
+/**
+ * Supabase認証のコールバック処理
+ *
+ * @param request - Next.jsのリクエストオブジェクト
+ * @returns 認証結果に応じたリダイレクトレスポンス
+ */
 export async function GET(request: NextRequest): Promise<NextResponse> {
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get('code')
@@ -42,7 +48,14 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     // 認証エラーがあればログインページへリダイレクト
     if (error) {
-      logger.error('Authentication error', undefined, { error })
+      logger.error('Authentication error', undefined, {
+        action: 'login',
+        result: 'error',
+        metadata: {
+          errorType: 'auth_failed',
+          errorMessage: error.message,
+        },
+      })
       return NextResponse.redirect(
         new URL(
           `${REDIRECT_PATH.LOGIN}?error=${AUTH_ERROR_CODE.AUTH_FAILED}`,
@@ -52,10 +65,17 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
 
     // 認証成功時のログ記録
-    const userId = data.user?.id
-    logger.info('User logged in successfully', userId, {
-      email: data.user?.email,
-      provider: data.user?.app_metadata?.provider,
+    // getUserIdコールバックが自動的にGoogle登録名を取得
+    logger.info('User logged in successfully', undefined, {
+      userId: data.user.id,
+      userName:
+        (data.user.user_metadata.full_name as string | undefined) ?? 'Unknown',
+      action: 'login',
+      result: 'success',
+      metadata: {
+        email: data.user.email,
+        provider: data.user.app_metadata.provider,
+      },
     })
 
     // 認証成功時はダッシュボードにリダイレクト
@@ -65,7 +85,12 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   } catch (err: unknown) {
     // 予期しないエラーの場合もログインページへリダイレクト
     logger.error('Unexpected error during authentication', undefined, {
-      error: err,
+      action: 'login',
+      result: 'error',
+      metadata: {
+        errorType: 'unexpected',
+        errorMessage: err instanceof Error ? err.message : String(err),
+      },
     })
     return NextResponse.redirect(
       new URL(

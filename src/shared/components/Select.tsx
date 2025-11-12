@@ -8,7 +8,7 @@ type SelectSize = 'xs' | 'sm' | 'md' | 'lg'
 /**
  * Selectコンポーネントのプロパティ
  */
-export type SelectProps = ComponentPropsWithoutRef<'select'> & {
+export type SelectProps = Omit<ComponentPropsWithoutRef<'select'>, 'size'> & {
   /** セレクトのサイズ */
   size?: SelectSize
   /** ボーダースタイル（デフォルト: true） */
@@ -24,7 +24,7 @@ export type SelectProps = ComponentPropsWithoutRef<'select'> & {
  * React Hook Form との統合を想定した設計。
  */
 export function Select({
-  size,
+  size = 'md',
   bordered,
   error,
   className = '',
@@ -40,7 +40,7 @@ export function Select({
   }
 
   // クラスの取得
-  const sizeClass = size ? sizeMap[size] : ''
+  const sizeClass = sizeMap[size]
   const borderedClass = bordered !== false ? 'select-bordered' : ''
   const errorClass = error === true ? 'select-error' : ''
 
