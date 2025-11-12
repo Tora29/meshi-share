@@ -2,13 +2,23 @@ import { NextResponse } from 'next/server'
 
 import type { NextRequest } from 'next/server'
 
+interface TestResult {
+  ok: boolean
+  status?: number
+  statusText?: string
+  error?: string
+  errorType?: string
+  message?: string
+  responseBody?: string
+}
+
 export async function GET(_request: NextRequest): Promise<NextResponse> {
   // デバッグモードでのみ有効
   if (!process.env.LOGDOCK_DEBUG) {
     return NextResponse.json({ error: 'Not available' }, { status: 404 })
   }
 
-  const results: Record<string, any> = {}
+  const results: Record<string, TestResult> = {}
 
   // 1. LogDock API直接アクセス（Cloudflare Accessなし）
   try {
@@ -76,7 +86,7 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
     }
     if (!response.ok) {
       const text = await response.text()
-      results.postLog.responseBody = text
+      results.postLog = { ...results.postLog, responseBody: text }
     }
   } catch (error) {
     results.postLog = {
@@ -94,7 +104,7 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
       status: response.status,
       message: 'External connectivity works',
     }
-  } catch (error) {
+  } catch {
     results.externalConnectivity = {
       ok: false,
       error: 'Cannot reach external services',

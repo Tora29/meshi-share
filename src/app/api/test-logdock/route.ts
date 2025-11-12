@@ -20,7 +20,15 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
     })
 
     // LogDockのエンドポイントに直接アクセスしてテスト
-    let testResponse: any = { ok: false, error: 'Not executed' }
+    interface HealthCheckResult {
+      ok: boolean
+      status?: number
+      statusText?: string
+      error?: string
+      errorType?: string
+    }
+
+    let testResponse: HealthCheckResult = { ok: false, error: 'Not executed' }
     try {
       const response = await fetch(`${process.env.LOGDOCK_API_URL}/health`, {
         method: 'GET',
@@ -36,7 +44,7 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
       }
       if (!response.ok) {
         const text = await response.text()
-        testResponse.error = text
+        testResponse = { ...testResponse, error: text }
       }
     } catch (error) {
       testResponse = {

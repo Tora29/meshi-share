@@ -3,27 +3,29 @@
  * LogDockがプライベートネットワークにある場合の代替案
  */
 
+type LogMetadata = Record<string, unknown>
+
 interface LogEntry {
   level: 'info' | 'warn' | 'error' | 'debug'
   message: string
   userId?: string
-  metadata?: Record<string, any>
+  metadata?: LogMetadata
 }
 
 class ProductionLogger {
-  info(message: string, userId?: string, metadata?: Record<string, any>): void {
+  info(message: string, userId?: string, metadata?: LogMetadata): void {
     this.log('info', message, userId, metadata)
   }
 
-  warn(message: string, userId?: string, metadata?: Record<string, any>): void {
+  warn(message: string, userId?: string, metadata?: LogMetadata): void {
     this.log('warn', message, userId, metadata)
   }
 
-  error(message: string, userId?: string, metadata?: Record<string, any>): void {
+  error(message: string, userId?: string, metadata?: LogMetadata): void {
     this.log('error', message, userId, metadata)
   }
 
-  debug(message: string, userId?: string, metadata?: Record<string, any>): void {
+  debug(message: string, userId?: string, metadata?: LogMetadata): void {
     if (process.env.NODE_ENV === 'development' || process.env.LOGDOCK_DEBUG) {
       this.log('debug', message, userId, metadata)
     }
@@ -33,7 +35,7 @@ class ProductionLogger {
     level: LogEntry['level'],
     message: string,
     userId?: string,
-    metadata?: Record<string, any>
+    metadata?: LogMetadata
   ): void {
     const entry: LogEntry = {
       level,
