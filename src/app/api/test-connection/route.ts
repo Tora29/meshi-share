@@ -30,7 +30,7 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
   // 2. LogDock API with Cloudflare Access
   try {
     const response = await fetch(
-      `${process.env.LOGDOCK_API_URL}/health` ?? '',
+      `${process.env.LOGDOCK_API_URL ?? ''}/health`,
       {
         method: 'GET',
         headers: {
