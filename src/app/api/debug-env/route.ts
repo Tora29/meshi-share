@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 
-export async function GET() {
+import type { NextRequest } from 'next/server'
+
+export async function GET(_request: NextRequest): Promise<NextResponse> {
   // 本番環境では無効化すべきエンドポイント
   if (process.env.NODE_ENV === 'production' && !process.env.LOGDOCK_DEBUG) {
     return NextResponse.json({ error: 'Not available' }, { status: 404 })
@@ -14,7 +16,7 @@ export async function GET() {
       apiKey: process.env.LOGDOCK_API_KEY ? '✓ Set' : '✗ Missing',
       cfAccessId: process.env.CF_ACCESS_CLIENT_ID ? '✓ Set' : '✗ Missing',
       cfAccessSecret: process.env.CF_ACCESS_CLIENT_SECRET ? '✓ Set' : '✗ Missing',
-      debug: process.env.LOGDOCK_DEBUG || 'not set',
+      debug: process.env.LOGDOCK_DEBUG ?? 'not set',
     },
     supabase: {
       url: process.env.NEXT_PUBLIC_SUPABASE_URL ? '✓ Set' : '✗ Missing',
