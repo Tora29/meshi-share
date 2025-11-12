@@ -66,17 +66,23 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     // 認証成功時のログ記録
     // getUserIdコールバックが自動的にGoogle登録名を取得
-    logger.info('User logged in successfully', undefined, {
-      userId: data.user.id,
-      userName:
-        (data.user.user_metadata.full_name as string | undefined) ?? 'Unknown',
-      action: 'login',
-      result: 'success',
-      metadata: {
-        email: data.user.email,
-        provider: data.user.app_metadata.provider,
-      },
-    })
+    try {
+      logger.info('User logged in successfully', undefined, {
+        userId: data.user.id,
+        userName:
+          (data.user.user_metadata.full_name as string | undefined) ??
+          'Unknown',
+        action: 'login',
+        result: 'success',
+        metadata: {
+          email: data.user.email,
+          provider: data.user.app_metadata.provider,
+        },
+      })
+    } catch (logError) {
+      // ログ送信に失敗してもユーザー認証は続行
+      console.error('[LogDock] Failed to log login success:', logError)
+    }
 
     // 認証成功時はダッシュボードにリダイレクト
     return NextResponse.redirect(
