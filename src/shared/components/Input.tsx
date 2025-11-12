@@ -8,7 +8,7 @@ type InputSize = 'xs' | 'sm' | 'md' | 'lg'
 /**
  * Inputコンポーネントのプロパティ
  */
-export type InputProps = ComponentPropsWithoutRef<'input'> & {
+export type InputProps = Omit<ComponentPropsWithoutRef<'input'>, 'size'> & {
   /** インプットのサイズ */
   size?: InputSize
   /** ボーダースタイル（デフォルト: true） */
@@ -24,7 +24,7 @@ export type InputProps = ComponentPropsWithoutRef<'input'> & {
  * React Hook Form との統合を想定した設計。
  */
 export function Input({
-  size,
+  size = 'md',
   bordered,
   error,
   className = '',
@@ -39,7 +39,7 @@ export function Input({
   }
 
   // クラスの取得
-  const sizeClass = size ? sizeMap[size] : ''
+  const sizeClass = sizeMap[size]
   const borderedClass = bordered !== false ? 'input-bordered' : ''
   const errorClass = error === true ? 'input-error' : ''
   const primaryClass = error !== true ? 'input-primary' : '' // エラー時以外はprimary

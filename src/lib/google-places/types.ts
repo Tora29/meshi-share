@@ -54,7 +54,8 @@ export type PlacePhoto = {
  * Text Search のレスポンス
  */
 export type TextSearchResponse = {
-  places: Place[]
+  /** 検索結果（結果が0件の場合は省略される） */
+  places?: Place[]
 }
 
 /**

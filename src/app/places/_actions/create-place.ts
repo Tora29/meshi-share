@@ -7,6 +7,7 @@ import {
   placeCreateSchema,
   type PlacePostInput,
 } from '@/app/places/_schemas/place.schema'
+import { logger } from '@/lib/logger'
 import { prisma } from '@/lib/prisma'
 import { createClient } from '@/lib/supabase/server'
 import { type ServerActionResponse } from '@/shared/types/server-action'
@@ -36,6 +37,13 @@ export async function createPlace(
   } = await supabase.auth.getUser()
 
   if (!user || authError) {
+    logger.warn('Place creation failed - authentication required', undefined, {
+      action: 'create_place',
+      result: 'error',
+      metadata: {
+        errorType: 'auth_required',
+      },
+    })
     return {
       success: false,
       error: MUTATION_ERROR_MESSAGES.AUTH_REQUIRED,
@@ -49,6 +57,17 @@ export async function createPlace(
   })
 
   if (!validationResult.success) {
+    logger.warn('Place creation failed - validation error', undefined, {
+      userId: user.id,
+      userName:
+        (user.user_metadata.full_name as string | undefined) ?? 'Unknown',
+      action: 'create_place',
+      result: 'error',
+      metadata: {
+        errorType: 'validation',
+        validationErrors: validationResult.error.flatten(),
+      },
+    })
     return {
       success: false,
       error: MUTATION_ERROR_MESSAGES.VALIDATION_FAILED,
@@ -74,22 +93,59 @@ export async function createPlace(
       },
     })
 
-    // 4. キャッシュ再検証
+    // 4. 成功ログ
+    logger.info('Place created successfully', undefined, {
+      userId: user.id,
+      userName:
+        (user.user_metadata.full_name as string | undefined) ?? 'Unknown',
+      action: 'create_place',
+      result: 'success',
+      metadata: {
+        placeId: newPlace.id,
+        placeName: newPlace.name,
+        googlePlaceId: newPlace.placeId,
+      },
+    })
+
+    // 5. キャッシュ再検証
     revalidatePath('/places')
     revalidatePath('/dashboard')
 
-    // 5. 詳細ページへリダイレクト
+    // 6. 詳細ページへリダイレクト
     redirect(`/places/${newPlace.id}`)
   } catch (error) {
-    console.error('DB save error:', error)
-
     // Unique制約違反のチェック（重複）
     if (isPrismaUniqueConstraintError(error)) {
+      logger.warn('Place creation failed - duplicate', undefined, {
+        userId: user.id,
+        userName:
+          (user.user_metadata.full_name as string | undefined) ?? 'Unknown',
+        action: 'create_place',
+        result: 'error',
+        metadata: {
+          errorType: 'duplicate',
+          googlePlaceId: validatedData.placeId,
+        },
+      })
       return {
         success: false,
         error: MUTATION_ERROR_MESSAGES.PLACE_ALREADY_EXISTS,
       }
     }
+
+    // DB保存エラー
+    logger.error('Place creation failed - database error', undefined, {
+      userId: user.id,
+      userName:
+        (user.user_metadata.full_name as string | undefined) ?? 'Unknown',
+      action: 'create_place',
+      result: 'error',
+      metadata: {
+        errorType: 'database',
+        errorMessage: error instanceof Error ? error.message : String(error),
+        googlePlaceId: validatedData.placeId,
+      },
+    })
 
     return {
       success: false,
