@@ -12,9 +12,9 @@ const compat = new FlatCompat({
 })
 
 const eslintConfig = [
-  ...compat.extends('next/core-web-vitals', 'next/typescript'),
   {
     ignores: [
+      '**/node_modules/**',
       'node_modules/**',
       '.next/**',
       'out/**',
@@ -23,6 +23,7 @@ const eslintConfig = [
       'prisma/**',
     ],
   },
+  ...compat.extends('next/core-web-vitals', 'next/typescript'),
   {
     languageOptions: {
       parser: (await import('@typescript-eslint/parser')).default,
